@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Portofolio</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="data-analytics-churn-costumer-in-banking-sector---fajri-yanti">Data Analytics Churn Costumer In Banking Sector</h1>
+<h2 id="project-domain">Project Domain</h2>
+<p>Customer churning [1, 2] is the estimate or analysis of degree of customers who turn to shift to an alternative. It is the most common problem witnessed in any industry. Banking is one such industry that focuses a lot on customer’s behavior by tracking their activities</p>
+<p>As we know, customers are one of the most valuable assets in the business domain, especially in the banking sector. When customers use the product, they contribute to the product’s growth rate. However, many would unsubscribe from the product if it no longer had any advantages.</p>
+<p>Many competitive companies have noticed that a critical approach for survival within the industry is to retain existing customers. This leads to the importance of churn management in organizations such as banks.</p>
+<h2 id="business-understanding">Business Understanding</h2>
+<p>For the banking sector, customers churn predictions are a severe issue and have an immense impact on the proﬁt line of bankers. Thus, customer retention schemes can target high-risk customers who wish to discontinue their custom and switch to another competitor. To minimize the cost of bank sectors’ customer retention marketing scheme, an accurate and prior identiﬁcation of these customers is hypercritical.  The Problem is based on the domain of the banking sector, where the bank wants to predict a customer’s Churn depending upon the customer’s data. By Churn, it is meant that the bank wants to predict if a customer will be leaving the bank or not.</p>
+<h2 id="goals">Goals</h2>
+<p>In order to create a comprehensive classification model that can reliably predict whether or not a bank’s customers will leave, this project aims to succinctly describe how a banking dataset was used to explore and cluster data using visualization, statistical analysis, and principal component analysis.</p>
+<p>This project uses machine learning models such as SVM, Logistic Regression, Gradient Boosting, Decision Tree, KNeighbors, and Random Forest to achieve its goal of predicting whether or not a bank’s clients would quit.</p>
+<h2 id="data-understanding">Data Understanding</h2>
+<p>The data utilized in this project to undertake analysis and predictive modeling of bank customer churn was obtained from <a href="https://www.kaggle.com/datasets/mathchi/churn-for-bank-customers">kaggle</a>. The target dataset is a list of bank customers comprising information about 10,000 customers and 14 attributes for each client. The variables included in the dataset are listed in Table 1.<br>
+There is a significant imbalance between the fraction of churners and non-churners in the dataset. Additionally, in order to ascertain the percentages across genders, age groups, and other categories, we performed an exploratory data analysis. To prevent the classifiers from favoring the majority class of non-churners while forecasting the future, the data must be balanced before  inputting to the classifier. To accomplish the balance, we used oversampling methods (SMOTE).</p>
+<p>About dataset</p>
+<figcaption align="center">Table 1 - The Description of Variables  </figcaption>  
+
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RowNumber</td>
+<td>corresponds to the record (row) number and has no effect on the output.</td>
+</tr>
+<tr>
+<td>CustomerId</td>
+<td>contains random values and has no effect on customer leaving the bank.</td>
+</tr>
+<tr>
+<td>Surname</td>
+<td>the surname of a customer has no impact on their decision to leave the bank.</td>
+</tr>
+<tr>
+<td>CreditScore</td>
+<td>can have an effect on customer churn, since a customer with a higher credit score is less likely to leave the bank.</td>
+</tr>
+<tr>
+<td>Geography</td>
+<td>a customer’s location can affect their decision to leave the bank</td>
+</tr>
+<tr>
+<td>Gender</td>
+<td>it’s interesting to explore whether gender plays a role in a customer leaving the bank</td>
+</tr>
+<tr>
+<td>Age</td>
+<td>this is certainly relevant, since older customers are less likely to leave their bank than younger ones</td>
+</tr>
+<tr>
+<td>Tenure</td>
+<td>refers to the number of years that the customer has been a client of the bank.Normally, older clients are more loyal and less likely to leave a bank</td>
+</tr>
+<tr>
+<td>Balance</td>
+<td>also a very good indicator of customer churn, as people with a higher balance in their accounts are less likely to leave the bank compared to those with lower balances.</td>
+</tr>
+<tr>
+<td>NumOfProducts</td>
+<td>refers to the number of products that a customer has purchased through the bank</td>
+</tr>
+<tr>
+<td>HasCrCard</td>
+<td>denotes whether or not a customer has a credit card. This column is also relevant, since people with a credit card are less likely to leave the bank.</td>
+</tr>
+<tr>
+<td>IsActiveMember</td>
+<td>active customers are less likely to leave the bank.</td>
+</tr>
+<tr>
+<td>Exited</td>
+<td>whether or not the customer left the bank</td>
+</tr>
+<tr>
+<td>EstimatedSalary</td>
+<td>as with balance, people with lower salaries are more likely to leave the bank compared to those with higher salaries</td>
+</tr>
+</tbody>
+</table><blockquote>
+<p>Exploratory data analysis (EDA)</p>
+</blockquote>
+<figure>  
+<img src="https://drive.google.com/uc?export=view&amp;id=17vBlrc81FfduxD49mZngqTslLPl3PEq7">
+<figcaption align="center">Fig.1 - EDA Geography, Gender, HasCrCard, and IsActiveMember  </figcaption>  
+</figure>
+<p>From the visualization Fig.1 , we can observe:</p>
+<ul>
+<li>
+<p>Clients who have been with the bank for a short period of time or a long period of time are more likely to churn than those who have been with the bank for a longer period of time.</p>
+</li>
+<li>
+<p>Female clients churn at a higher rate than male customers.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>The majority of clients that churned used credit cards.</p>
+</li>
+<li>
+<p>The vast majority of the information comes from French citizens. However, the proportion of churned customers is inversely linked to the population of consumers.</p>
+</li>
+</ul>
+<h2 id="data-preparation">Data Preparation</h2>
+<ul>
+<li>check null data from dataset</li>
+<li>To get the statistical overview of the data, I used .describe()</li>
+<li>Since “RowNumber,” “CustomerId,” and “Surname” columns are not required in this analysis project because they have no bearing on the issue to be solved. We can eliminate that column.</li>
+<li>Exploring data using data visualization method.</li>
+<li>Applied correlation matrix, Encoding Categorical Data, and handling imbalance data using SMOTE.</li>
+<li></li>
+</ul>
+<h3 id="correlation-matrix">Correlation Matrix</h3>
+<p>A correlation matrix is a table showing correlation coefficients between variables. Each cell in the table shows the correlation between two variables. A correlation matrix is used to summarize data, as an input into a more advanced analysis, and as a diagnostic for advanced analyses.</p>
+<figure>  
+<img src="https://drive.google.com/uc?export=view&amp;id=15COG59Q9e95kcjrlKpFDtdGwZdd21whR">
+<figcaption align="center">Fig.2 - Correlation Matrix </figcaption>  
+</figure>
+<blockquote>
+<p>From the visualization Fig.2 we can see that “Age” feature was found to have the strongest relationship with Exited. Here, we can infer that the rate of client loss grows as customer age increases, positive relationship.</p>
+</blockquote>
+<ul>
+<li>Plotting corelation between age and exited</li>
+</ul>
+<p>Used a boxplot from the seaborn library to conduct basic visualization in order to find outliers in the datasets. to identify outliers in age column, look at the visualization below.</p>
+<figure>  
+<img src="https://drive.google.com/uc?export=view&amp;id=1mI1vJPUjbjnIP1UVs2ALgiaO7CK6povc">
+<figcaption align="center">Fig.3 - Age Outlier  </figcaption>  
+</figure>
+<p>in the visualization Fig.3  above we can identify some outliers. To drop the outliers I used the pandas library to handle the data in order to remove and clean the outliers.</p>
+<p>Remove the outlier</p>
+<h3 id="encoding-categorical-data">Encoding Categorical Data</h3>
+<p>To generate categorical data accessible to the various models, categorical data must first be translated into integer representation through the process of encoding.</p>
+<p>the “geography” column contains categorical data, it should be one-hot encoded using the pandas library (pd.get dummies) to provide more features. We also transform the categorical information in “gender” into numerical information. Male is equal to 0, while female is equal to 1.</p>
+<h3 id="imbalance-data"><a href="https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data">Imbalance data</a></h3>
+<p>A classification dataset with skewed class proportions is called imbalanced. Classes that make up a large proportion of the data set are called majority classes. Those that make up a smaller proportion are minority classes.</p>
+<h4 id="handling-imbalance-data-using-smote">Handling imbalance data using SMOTE</h4>
+<p>SMOTE(Synthetic Minority Oversampling Technique) was utilized in this project to manage imbalance data. SMOTE is an oversampling technique where the synthetic samples are generated for the minority class. This algorithm helps to overcome the overfitting problem posed by random oversampling. It focuses on the feature space to generate new instances with the help of interpolation between the positive instances that lie together.</p>
+<figure>  
+<img src="https://drive.google.com/uc?export=view&amp;id=1ObVFa3TwvHce3tR8G1WSfJBhwzc2mdF1">
+<figcaption align="center">Fig.4 - Imbalance Class </figcaption>  
+</figure>
+<p>Fig. 4 shows that class 0 (not exited) is more dominant than class 1 (exited)</p>
+<p>We can oversample the minority class using SMOTE and plot the transformed dataset.</p>
+<p>The SMOTE class acts like a data transform object from scikit-learn in that it must be defined and configured, fit on a dataset, then applied to create a new transformed version of the dataset.</p>
+<p>For example, we can define a SMOTE instance with default parameters that will balance the minority class and then fit and apply it in one step to create a transformed version of our dataset.</p>
+<p>Once transformed, we can summarize the class distribution of the new transformed dataset, which would expect to now be balanced through the creation of many new synthetic examples in the minority class.</p>
+<h3 id="standar-scaler">Standar Scaler</h3>
+<p>Data scaling is a data preparation step for numerical features. Many machine learning algorithms, such as gradient descent methods, the KNN algorithm, linear and logistic regression, and so on, require data scaling to get good results. For this, various scalers are defined. <a href="https://www.geeksforgeeks.org/data-pre-processing-wit-sklearn-using-standard-and-minmax-scaler/">Standard Scaler</a> assists in obtaining a standardized distribution with a mean of zero and a standard deviation of one (unit variance). By removing the feature’s mean value and dividing the result by the feature’s standard deviation, it standardizes the feature.</p>
+<h2 id="modeling">Modeling</h2>
+<p>This project developed some models using a variety of modelling techniques. Some of models using hyperparameters tuning to improve the accuracy.<br>
+To build the best models, this project established a variety of modeling techniques.  Several models applied hyperparameter tuning to improve accuracy.</p>
+<p>GridSearchCV to automate the tuning of hyperparameters.</p>
+<blockquote>
+<p>GridSearchCV is the process of performing hyperparameter tuning in order to determine the optimal values for a given model. As mentioned above, the performance of a model significantly depends on the value of hyperparameters. Note that there is no way to know in advance the best values for hyperparameters so ideally, we need to try all possible values to know the optimal values.</p>
+</blockquote>
+<h3 id="logistic-regression">1.Logistic Regression</h3>
+<blockquote>
+<p>Logistic regression analysis is one kind of regression analysis which response variable is categorical and predictor variables are either categorical or numerical. If the response variable consists of two categories called binary logistic regression. Whereas, if the response variable consists of more than two categories and the category is a level called ordinal logistic regression. The probability model between predictor variables X1i, X2i, …, Xpi with response variables (π) is as follows[3].</p>
+</blockquote>
+<p>We applied best estimator parameter C=0.03359818286283781, penalty=‘l1’, solver=‘saga’ .</p>
+<p><strong>C</strong>: float, default=1.0<br>
+Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization.</p>
+<p><strong>penalty</strong>: {‘l1’, ‘l2’, ‘elasticnet’, ‘none’}, default=’l2’</p>
+<p>Specify the norm of the penalty:</p>
+<ul>
+<li>
+<p><code>'none'</code>: no penalty is added;</p>
+</li>
+<li>
+<p><code>'l2'</code>: add a L2 penalty term and it is the default choice;</p>
+</li>
+<li>
+<p><code>'l1'</code>: add a L1 penalty term;</p>
+</li>
+<li>
+<p><code>'elasticnet'</code>: both L1 and L2 penalty terms are added.</p>
+</li>
+</ul>
+<p><strong>solver</strong>{‘newton-cg’, ‘lbfgs’, ‘liblinear’, ‘sag’, ‘saga’}, default=’lbfgs’</p>
+<p>Algorithm to use in the optimization problem. Default is ‘lbfgs’. To choose a solver, you might want to consider the following aspects:</p>
+<ul>
+<li>
+<p>For small datasets, ‘liblinear’ is a good choice, whereas ‘sag’ and ‘saga’ are faster for large ones;</p>
+</li>
+<li>
+<p>For multiclass problems, only ‘newton-cg’, ‘sag’, ‘saga’ and ‘lbfgs’ handle multinomial loss;</p>
+</li>
+<li>
+<p>‘liblinear’ is limited to one-versus-rest schemes.</p>
+</li>
+</ul>
+<p>Accuracy score : 0.785624607658506</p>
+<h3 id="svm">2.SVM</h3>
+<blockquote>
+<p>SVM algorithm is one of supervised machine learning algorithms based on statistical learning theory [4]. It selects from the training samples a set of characteristic subsets so that the classification of the character subset is equivalent to the division of the entire dataset. the SVM has been used to solve different classification problems successfully in many applications [5,6]. So, the application scope is very broad due to its excellent learning ability. For example, intrusion detection, classification of facial expression, prediction of time series, speech recognition, image recognition, signal processing, detection of genes, text classification, recognition of fonts, diagnosis of faults, chemical analysis, recognition of images and other fields. In solving classification problems, the SVM algorithm has certain obvious advantages.  It’s got a shorter prediction time [7][8]. The accuracy of the target detection classifier can be guaranteed by the global optimal solution. But there are some drawbacks, such as the model of detection is long-established. When processing large-scale data, time complexity and space complexity increase linearly with the increase in data [9,10]. In comparison, SVM is more capable of solving smaller samples, nonlinearity and high dimensionality problems compared with other classification algorithms [11, 12].</p>
+</blockquote>
+<p>To optimize the accuracy we used ‘C’: 10, ‘gamma’: 0.1, ‘kernel’: ‘rbf’ as parameter</p>
+<p><strong>C</strong>: float, default=1.0</p>
+<p>Regularization parameter. The strength of the regularization is inversely proportional to C. Must be strictly positive. The penalty is a squared l2 penalty.</p>
+<p><strong>kernel</strong>: {‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’} or callable, default=’rbf’</p>
+<p>Specifies the kernel type to be used in the algorithm. If none is given, ‘rbf’ will be used. If a callable is given it is used to pre-compute the kernel matrix from data matrices; that matrix should be an array of shape  <code>(n_samples, n_samples)</code>.<br>
+Accuracy score : 0.844632768361582</p>
+<h3 id="random-forest">3. Random Forest</h3>
+<blockquote>
+<p>Random Forest developed by Leo Breiman [13] is a group<br>
+of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble.</p>
+</blockquote>
+<p>We found that the best accuracy was achieved using the parameters n_estimators=50, max_depth=16, random_state=55, n_jobs=-1.</p>
+<ul>
+<li>max_features:</li>
+</ul>
+<p>These are the maximum number of features Random Forest is allowed to try in individual tree. There are multiple options available in Python to assign maximum features. Here are a few of them :</p>
+<ol>
+<li><em>Auto/None</em>  : This will simply take all the features which make sense in every tree. Here we simply do not put any restrictions on the individual tree.</li>
+<li><em>sqrt</em>  : This option will take square root of the total number of features in individual run. For instance, if the total number of variables are 100, we can only take 10 of them in individual tree.”log2″ is another similar type of option for max_features.</li>
+<li><em>0.2</em>  : This option allows the random forest to take 20% of variables in individual run. We can assign and value in a format “0.x” where we want x% of features to be considered.</li>
+</ol>
+<ul>
+<li>n_estimators :</li>
+</ul>
+<p>This is the number of trees you want to build before taking the maximum voting or averages of predictions. Higher number of trees give you better performance but makes your code slower.</p>
+<ul>
+<li>max_depth: int, default=None</li>
+</ul>
+<p>The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.</p>
+<ul>
+<li>random_state: int, RandomState instance or None, default=None</li>
+</ul>
+<p>Controls both the randomness of the bootstrapping of the samples used when building trees (if  <code>bootstrap=True</code>) and the sampling of the features to consider when looking for the best split at each node (if  <code>max_features &lt; n_features</code>).</p>
+<h3 id="gradient-boosting">4. Gradient Boosting</h3>
+<blockquote>
+<p><a href="https://www.geeksforgeeks.org/ml-gradient-boosting/">Gradient Boosting</a> is a popular boosting algorithm. In gradient boosting, each predictor corrects its predecessor’s error. In contrast to Adaboost, the weights of the training instances are not tweaked, instead, each predictor is trained using the residual errors of predecessor as labels.</p>
+</blockquote>
+<p>We discovered that utilizing the parameters learning_rate=0.03, max_depth=8, n_estimators= 1000, subsample= 0.9 resulted in the highest accuracy.</p>
+<p><strong>learning_rate</strong>: float, default=0.1</p>
+<p>Learning rate shrinks the contribution of each tree by  <code>learning_rate</code>. There is a trade-off between learning_rate and n_estimators. Values must be in the range  <code>(0.0, inf)</code>.</p>
+<p><strong>n_estimators</strong>: int, default=100</p>
+<p>The number of boosting stages to perform. Gradient boosting is fairly robust to over-fitting so a large number usually results in better performance. Values must be in the range  <code>[1, inf)</code>.</p>
+<p><strong>subsample</strong>: float, default=1.0</p>
+<p>The fraction of samples to be used for fitting the individual base learners. If smaller than 1.0 this results in Stochastic Gradient Boosting.  <code>subsample</code>  interacts with the parameter  <code>n_estimators</code>. Choosing  <code>subsample &lt; 1.0</code>  leads to a reduction of variance and an increase in bias. Values must be in the range  <code>(0.0, 1.0]</code>.</p>
+<p><strong>max_depth</strong>: int, default=3</p>
+<p>The maximum depth of the individual regression estimators. The maximum depth limits the number of nodes in the tree. Tune this parameter for best performance; the best value depends on the interaction of the input variables. Values must be in the range  <code>[1, inf)</code>.</p>
+<h3 id="knn">5.KNN</h3>
+<blockquote>
+<p>The k-Nearest-Neighbours (kNN) is a non-parametric classification method, which is simple but effective in many cases [14]. For a data record t to be classified, its k nearest neighbours are retrieved, and this forms a neighbourhood of t. Majority voting among the data records in the neighbourhood is usually used to decide the classification for t with or without consideration of distance-based weighting. However, to apply kNN we need to choose an appropriate value for k, and the success of classification is very much dependent on this value. In a sense, the kNN method is biased by k. There are many ways of choosing the k value, but a simple one is to run the algorithm many times with different k values and choose the one with the best performance.</p>
+</blockquote>
+<p>We found that the parameters n_neighbors=10  produced the better accuracy.</p>
+<p><strong>n_neighbors</strong>: int, default=5</p>
+<p>Number of neighbors to use by default for  <a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html#sklearn.neighbors.KNeighborsClassifier.kneighbors" title="sklearn.neighbors.KNeighborsClassifier.kneighbors"><code>kneighbors</code></a>  queries.</p>
+<h3 id="desicion-tree">6.Desicion Tree</h3>
+<blockquote>
+<p>A  decision  tree  is  a  classiﬁer  expressed  as  a  recursive  partition  of  the  instance  space.  The  decision  tree  consists  of  nodes  that  form  a  rooted  tree, meaning  it  is  a  directed  tree  with  a  node  called  “root”  that  has  no  incoming edges.  All other nodes  have exactly one incoming  edge.  A node with  outgoing edges is called  an internal or  test  node.  All  other  nodes  are  called  leaves (also known  as  terminal  or  decision  nodes).  In  a  decision  tree,  each  internal  node splits  the  instance  space  into  two  or  more  sub-spaces  according  to  a  certain discrete  function  of  the  input  attributes  values.</p>
+</blockquote>
+<h2 id="evaluation">Evaluation</h2>
+<p>This project used Accuracy, Precision, Recall, and F1 to evaluate the model as Accuracy, Precision, Recall, and F1  are the best metrics for assessing classification problems.</p>
+<p>Accuracy<br>
+Accuracy is a ratio of the true detected cases to the total cases, and it has been utilized to evaluate models on a balanced dataset [24]. Accordingly, it can be calculated as:</p>
+<blockquote>
+<p>Accuracy = TP+TN/TP+FP+FN+TN</p>
+</blockquote>
+<p>Accuracy is the most straightforward intuitive performance metric because it is just a ratio of correctly predicted observations to total observations. One can believe that our model is the best if we have high accuracy. Accuracy is a helpful indicator, but only when the values of false positives and false negatives are almost equal. As a result, you must consider additional criteria while evaluating the model’s performance. Our model received the most excellent accuracy of 0.88, indicating that it is about 88% correct.</p>
+<p>Precision</p>
+<p>Precision is the proportion of accurately predicted positive observations to all expected positive statements. High accuracy is associated with a low false positive rate. We have 0.77 accuracy, which is rather good.</p>
+<blockquote>
+<p>Precision = TP/TP+FP</p>
+</blockquote>
+<p>Recall and F1-score</p>
+<p>Recall: calculates the ratio of retrieved relevant churns over the total number of a relevant customer churning [25]. F1-score allows combining both precisions and recall into a single measure that captures both properties.</p>
+<blockquote>
+<p>Recall = TP/TP+FN<br>
+F1 Score = 2*(Recall * Precision) / (Recall + Precision)</p>
+</blockquote>
+<p>True Positives (TP) - These are the correctly predicted positive values which means that the value of actual class is yes and the value of predicted class is also yes. E.g. if actual class value indicates that the costumers is churn/exited and predicted class tells the same thing.</p>
+<p>True Negatives (TN) - These are the correctly predicted negative values which means that the value of actual class is no and value of predicted class is also no. E.g. if actual class says that the costumers is not churn and predicted class tells the same thing.</p>
+<p>False positives and false negatives, these values occur when your actual class contradicts with the predicted class.</p>
+<p>False Positives (FP) – When actual class is no and predicted class is yes. E.g. if actual class says the customers not exited/churn but predicted class tells you that the costumers indicate exited.</p>
+<p>False Negatives (FN) – When actual class is yes but predicted class in no. E.g. if actual class value indicates that the costumers exited and predicted class tells that the costumers are nit exited.</p>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li>Using machine learning  techniques, we aimed to develop a churn prediction model for this project.</li>
+</ul>
+<ul>
+<li>The data set had 10000 rows, and there were no missing values. The dataset had 14 variables.</li>
+</ul>
+<ul>
+<li>
+<p>Clients who have been with the bank for a short period of time or a long period of time are more likely to churn than those who have been with the bank for a longer period of time.</p>
+</li>
+<li>
+<p>Customers between the ages of 40 and 60 were more likely to leave the bank.</p>
+</li>
+<li>
+<p>The bank’s target market or retention strategy for various age groups may need to be reconsidered.</p>
+</li>
+<li>
+<p>Female clients churn at a higher rate than male customers.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>The majority of clients that churned used credit cards.</p>
+</li>
+<li>
+<p>The vast majority of the information comes from French citizens. However, the proportion of churned customers is inversely linked to the population of consumers.</p>
+</li>
+<li>
+<p>Predictions were made with a total of 6 classification models.</p>
+</li>
+<li>
+<p>Utilized Random Forest and Gradient Boosting to predict customer churn</p>
+</li>
+</ul>
+<ul>
+<li>Both models have good accuracies score, with the Gradient Boosting model performing slightly better than the Random Forest model (88% versus 85%)</li>
+</ul>
+<h4 id="summary-evaluation">Summary evaluation</h4>
+
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>accuracy</th>
+<th>recall</th>
+<th>precision</th>
+<th>f1_score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Logistic Regression</td>
+<td>0.78</td>
+<td>0.79</td>
+<td>0.77</td>
+<td>0.78</td>
+</tr>
+<tr>
+<td>SVM</td>
+<td>0.84</td>
+<td>0.84</td>
+<td>0.82</td>
+<td>0.84</td>
+</tr>
+<tr>
+<td>Decision Tree</td>
+<td>0.84</td>
+<td>0.84</td>
+<td>0.82</td>
+<td>0.79</td>
+</tr>
+<tr>
+<td>GradientBoosting</td>
+<td>0.88</td>
+<td>0.88</td>
+<td>0.86</td>
+<td>0.88</td>
+</tr>
+<tr>
+<td>KNeighbors</td>
+<td>0.82</td>
+<td>0.80</td>
+<td>0.82</td>
+<td>0.82</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>0.85</td>
+<td>0.86</td>
+<td>0.84</td>
+<td>0.85</td>
+</tr>
+</tbody>
+</table><blockquote>
+<p>Six models were used to make predictions. The Gradient Boosting approach was used to choose the highest accuracy score.</p>
+</blockquote>
+<h1 id="section"></h1>
+<h3 id="references">References</h3>
+<p>[1] S.A. Qureshi, A.S. Rehman, A.M. Qamar, A. Kamal, <em>Telecommunication Subscribers’ Churn Prediction Model Using Machine Learning</em> (IEEE, 2013), pp. 131–136</p>
+<p>[2] B. Mishachandar, K.A. Kumar, Predicting customer churn using targeted proactive retention.Int. J. Eng. Technol. 7(2.27), 69–76 (2018)</p>
+<p>[3] Hosmer, David W., and Stanley Lemeshow. Special topics. John Wiley &amp; Sons, Inc., 2000.<br>
+89</p>
+<p>[4] Wendong, Y., Zhengzheng, L., &amp; Bo, J. (2017, June). A multi-factor analysis model of quantitative investment based on GA and SVM. In 2017 2nd International Conference on Image, Vision and Computing (ICIVC) (pp. 1152-1155). IEEE.</p>
+<p>[5] Kareem, F. Q., &amp; Abdulazeez, A. M. Ultrasound Medical Images<br>
+Classification Based on Deep Learning Algorithms: A Review.</p>
+<p>[6]- Zeebaree, Diyar Qader, Habibollah Haron, and Adnan Mohsin<br>
+Abdulazeez. “Gene selection and classification of microarray data<br>
+using convolutional neural network.” In 2018 International Conference on Advanced Science and Engineering (ICOASE), pp.145-150. IEEE, 2018.</p>
+<p>[7] Abdulqader, Dildar Masood, Adnan Mohsin Abdulazeez, and Diyar Qader Zeebaree. “Machine Learning Supervised Algorithms of Gene Selection: A Review.” Machine Learning 62, no. 03 (2020).</p>
+<p>[8] Zebari, R., Abdulazeez, A., Zeebaree, D., Zebari, D., &amp; Saeed, J.<br>
+(2020). A Comprehensive Review of Dimensionality Reduction<br>
+Techniques for Feature Selection and Feature Extraction. Journal of<br>
+Applied Science and Technology Trends, 1(2), 56-70.</p>
+<p>[9] Dai, H. (2018, March). Research on SVM improved algorithm for<br>
+large data classification. In 2018 IEEE 3rd International Conference<br>
+on Big Data Analysis (ICBDA) (pp. 181-185). IEEE.</p>
+<p>[10] Haji, S. H., &amp; Abdulazeez, A. M. (2021). COMPARISON OF<br>
+OPTIMIZATION TECHNIQUES BASED ON GRADIENT<br>
+DESCENT ALGORITHM: A REVIEW. PalArch’s Journal of<br>
+Archaeology of Egypt/Egyptology, 18(4), 2715-2743.</p>
+<p>[11] Tao, P., Sun, Z., &amp; Sun, Z. (2018). An improved intrusion detection algorithm based on GA and SVM. Ieee Access, 6, 13624-13631.</p>
+<p>[12] Chauhan, V. K., Dahiya, K., &amp; Sharma, A. (2019). Problem formulations and solvers in linear SVM: a review. Artificial Intelligence Review, 52(2), 803-855.</p>
+<p>[13] Breiman, L., Random Forests, Machine Learning 45(1), 5-32, 2001.</p>
+<p>[14] D. Hand, H. Mannila, P. Smyth.: Principles of Data Mining. The MIT Press. (2001)</p>
+</div>
+</body>
+
+</html>

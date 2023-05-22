@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="anime-recommendation-system---fajri-yanti">Anime Recommendation System</h1>
+<h2 id="project-domain">Project Domain</h2>
+<p>Anime Recommendation System is a system for managing anime that contains information on anime as well as the user’s preferred and most-watched episodes. It allows the user to classify and rank the programs they’ve watched. This technique aids individuals in discovering anime of interest to them. This project may examine the contents of the dataset to get insight. Later, linked cooperative filtering algorithms such as KNN is utilized to generate a list of the user’s preferred anime, along with its rating. Our goal is to make it easier for otaku* to get recommendations for new anime, so that they never get bored.</p>
+<p>*otaku: a Japanese term for those who like watching anime and reading manga.</p>
+<h2 id="business-understanding">Business Understanding</h2>
+<p>The majority of an otaku’s life revolves on Japanese popular culture, which consists mostly of viewing anime and being current on new releases. The primary issue comes after they have seen all of the available episodes or when their favorite television program is no longer showing. By then, they will be forced to find anything else to watch in order to escape boredom.</p>
+<p>Due to the primary issue that they are dealing with, there are a number of indirect difficulties that we have identified and come up with. The most significant ones are as follows:</p>
+<ul>
+<li>
+<p>Otakus need to obtain reliable ideas for anime depending on their preferences (for example, the kind of show, the amount of episodes, etc.).</p>
+</li>
+<li>
+<p>Otakus need to look for recommendations for anime that they haven’t seen before and need to do it immediately.</p>
+</li>
+<li>
+<p>The majority of the time, Otaku watch the majority of the popular anime that is now available on the market, thus it is important for them to find undervalued anime (sometimes overrated).</p>
+</li>
+<li>
+<p>Otakus have a desire to know the context of the anime that has been offered to them, such as the genre, the year it first aired, a summary, and so on.</p>
+</li>
+<li>
+<p>Otakus have a responsibility to stay current on the latest news on anime, particularly with regard to the most anticipated anime releases of the year.</p>
+</li>
+</ul>
+<p>Problem Statement:</p>
+<p>To reach the goal, we used two techniques: a collaborative filtering system based on the knn algorithm and content-based filtering.</p>
+<h2 id="goals">Goals</h2>
+<p>It is clear that the level of satisfaction experienced by otaku in relation to the recommended anime is the single most significant aspect that should be taken into account. The more closely it conforms to their tastes, the more satisfying the experience will be for them as users. Due to the possibility that they have previously seen one of the proposed anime, the research result from the anime recommendations should not be considered excessive. It need to produce more than one anime title in order to lessen the likelihood of the user having seen the anime in question before. Otakus should be given a variety of alternatives to pick from, such as obtaining information on anime or watching ideas for anime list.</p>
+<p>From this analysis, the following features should be included into the creating a list of recommended anime, the user should be presented with a list of anime generated based on their preferences or the algorithm itself.</p>
+<h2 id="data-understanding">Data Understanding</h2>
+<p>The data utilized in this project to undertake anime recommendation system was obtained from <a href="https://www.kaggle.com/datasets/CooperUnion/anime-recommendations-database">kaggle</a>. This data collection provides information on user preferences for 12,294 anime from 73,516 individuals. Each user may add anime to their finished list and rate it, and this data set is a compilation of those ratings.</p>
+<h4 id="the-description-of-variables">The Description of Variables</h4>
+<ul>
+<li>Anime.csv</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>Variables</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>anime_id</td>
+<td><a href="http://myanimelist.net">myanimelist.net</a>’s unique id identifying an anime</td>
+</tr>
+<tr>
+<td>name</td>
+<td>full name of anime</td>
+</tr>
+<tr>
+<td>genre</td>
+<td>comma separated list of genres for this anime</td>
+</tr>
+<tr>
+<td>type</td>
+<td>movie, special, music, TV, OVA, ONA</td>
+</tr>
+<tr>
+<td>episodes</td>
+<td>how many episodes in this show. (1 if movie)</td>
+</tr>
+<tr>
+<td>rating</td>
+<td>average rating out of 10 for this anime</td>
+</tr>
+<tr>
+<td>members</td>
+<td>number of community members that are in this anime’s “group”</td>
+</tr>
+</tbody>
+</table><figcaption align="center">Table 1.a - Dataset Anime </figcaption>
+<ul>
+<li>Rating.csv</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>Variables</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user_id</td>
+<td>non identifiable randomly generated user id</td>
+</tr>
+<tr>
+<td>anime_id</td>
+<td>the anime that this user has rated</td>
+</tr>
+<tr>
+<td>rating</td>
+<td>rating out of 10 this user has assigned (-1 if the user watched it but didn’t assign a rating)</td>
+</tr>
+</tbody>
+</table><figcaption align="center">Table 1.b -Dataset Rating</figcaption>
+<h2 id="data-preparation">Data Preparation</h2>
+<blockquote>
+<p>Cleaning the data</p>
+</blockquote>
+<ul>
+<li>checking null values using <code>.isnull().sum()</code> method and remove the missing values using <code>.drop</code></li>
+</ul>
+<blockquote>
+<p>merge dataset</p>
+</blockquote>
+<ul>
+<li>
+<p>This dataset contains two csv-formatted data collections, anime.csv and rating.csv. The dataset has similar column named ‘rating’ but different values. so, we need change the name column. We change the <code>rating</code> column in the anime.csv file with <code>avg_rating</code> and the second one with <code>user_rating</code>. We modify the column’s name using the <code>.rename()</code> function.</p>
+</li>
+<li>
+<p>Merge the dataset using <code>.merge</code> and stored it to <code>df</code> .</p>
+</li>
+</ul>
+<p><code>df = pd.merge(df_anime, df_rate, on='anime_id')</code></p>
+<ul>
+<li>Remove <code>user_rating == -1</code></li>
+</ul>
+<p><code>user_rating == -1</code> means the user watched it but didn’t assign a rating. Since <code>user_rating == -1</code> not required in this analysis project because they have no bearing on the issue to be solved. We can eliminate them. We used <code>df_rate = df_rate.drop(df_rate[df_rate.rating == -1].index)</code></p>
+<blockquote>
+<p>Exploratory Data Analysis (EDA)</p>
+</blockquote>
+<ul>
+<li>Statistical view of the dataset</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>count</th>
+<th>mean</th>
+<th>std</th>
+<th>min</th>
+<th>25%</th>
+<th>50%</th>
+<th>75%</th>
+<th>max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>anime_id</td>
+<td>6337146.0</td>
+<td>8902.5483888173</td>
+<td>8881.6739041292</td>
+<td>1.0</td>
+<td>1239.0</td>
+<td>6213.0</td>
+<td>14075.0</td>
+<td>34475.0</td>
+</tr>
+<tr>
+<td>avg_rating</td>
+<td>6337146.0</td>
+<td>7.675013424023994</td>
+<td>0.6699057620889904</td>
+<td>2.0</td>
+<td>7.29</td>
+<td>7.7</td>
+<td>8.15</td>
+<td>9.37</td>
+</tr>
+<tr>
+<td>members</td>
+<td>6337146.0</td>
+<td>184576.84681432304</td>
+<td>190953.41223216086</td>
+<td>33.0</td>
+<td>46803.0</td>
+<td>117091.0</td>
+<td>256325.0</td>
+<td>1013917.0</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>6337146.0</td>
+<td>36747.95345444148</td>
+<td>21013.370972111774</td>
+<td>1.0</td>
+<td>18985.0</td>
+<td>36815.0</td>
+<td>54873.0</td>
+<td>73516.0</td>
+</tr>
+<tr>
+<td>user_rating</td>
+<td>6337146.0</td>
+<td>7.808542678360259</td>
+<td>1.5724395013636019</td>
+<td>1.0</td>
+<td>7.0</td>
+<td>8.0</td>
+<td>9.0</td>
+<td>10.0</td>
+</tr>
+</tbody>
+</table><figcaption align="center">Table 2 - Statistical View from The Dataset</figcaption>
+<ul>
+<li>Distribution of rating per user</li>
+</ul>
+<p>The majority of users have rated less than 200 anime.</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=1RSrjZckVfLqd2xWaSL8Nxc5KJus63ca9">
+<figcaption align="center">Fig.1 - Distribution of rating per user </figcaption>
+
+<ul>
+<li>Distribution of User Rating</li>
+</ul>
+<p>Most of the Anime ratings are spread between 6.0 - 9.0</p>
+<p>The mode of the users ratings distribution is around 7.0 - 8.0</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=10Yd884IVILqdEYNV6IM4hGsu9hQYXdVL">
+<figcaption align="center">Fig.2 - Distribution of User Rating </figcaption>
+
+<ul>
+<li>Anime with the highest member community</li>
+</ul>
+<p>‘Death Note’ has the most community members, followed by ‘Shingeki no Kyojin’ and ‘Sword Art Online.’</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=168J6nAnKkXTMkkbo7VmhBt2awZRZ8qiN">
+<figcaption align="center">Fig.3 - Highest Community Member </figcaption>
+
+<ul>
+<li>Anime with Highest User Rated Count</li>
+</ul>
+<p>‘Death Note,’ ‘Sword Art Online,’ and ‘Shingeki no Kyojin’ are the three anime series that have the greatest ratings. ‘Death Note’ also has the biggest member community.</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=1wVJXKuUpFRSiIIpsFFb9bKcqlVyUUV1I">
+<figcaption align="center">Fig.4 - Anime User Rating</figcaption>
+
+<ul>
+<li>Most viewed anime types based on count of reviews</li>
+</ul>
+<p>TV has the most anime shows, and more than 4 million people watch them. The least number of users view at the music type.</p>
+<figure>
+</figure><p>&lt;img  src="<a href="https://drive.google.com/uc?export=view&amp;id=">https://drive.google.com/uc?export=view&amp;id=</a></p>
+<p>1snrqOfmEIMrkArI0Tyy6oFQNhHDEOHlc"&gt;</p>
+<figcaption align="center">Fig.5 - Most Viewed Anime</figcaption>
+
+<h2 id="modeling">Modeling</h2>
+<h3 id="collaborative-filtering">Collaborative Filtering</h3>
+<blockquote>
+<p>In this project, the recommendation system aims to get a rating for an anime. It uses collaborative filtering system algorithm such as KNN to make an accurate recommendation to the users.</p>
+</blockquote>
+<p>There are likely to be numerous people who rate an item in the same way that the user intended. Collaborative Filtering is guided by this comparable trend of their evaluations with the user[1]. Collaborative Filtering is based on the principle of recommending a product based on the preferences of others who share similar interests.</p>
+<p>Collaborative Filtering Based on past behavior, this approach builds a model of the user. Users may have watched videos or given ratings on items in the past. Using this model, the model can predict the item or a rating for the item that a user might be interested in based on an association between the user and the item. KNN is used as a collaborative filtering approach in recommender systems.</p>
+<p>KNN Collaborative filtering systems use the actions of users to recommend other most liked anime to the users. User-based approaches and item-based approaches can both be used. However, item-based approaches are usually preferred. Users are often more difficult to scale due to their dynamic nature, whereas items usually don’t change too much and can be computed offline and served without constantly retraining. KNN can be used to develop a collaborative filtering system based on items in order to make inferences about new samples; it uses a database in which data points are grouped into several clusters.</p>
+<p>Working of KNN Based on item feature similarity, KNN makes no assumptions about the distribution of the underlying data. As shown in table 3, it calculates the “distance” between the target most rated anime and every other anime in the database, then ranks their distances and returns the most liked anime’s as recommendations.</p>
+
+<table>
+<thead>
+<tr>
+<th>Recommendations for Hunter x Hunter (2011)</th>
+<th>Distance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1: Fullmetal Alchemist: Brotherhood</td>
+<td>0.582916050148331</td>
+</tr>
+<tr>
+<td>2: Steins;Gate</td>
+<td>0.6247773379089085</td>
+</tr>
+<tr>
+<td>3: Code Geass: Hangyaku no Lelouch R2</td>
+<td>0.6543877255375563</td>
+</tr>
+<tr>
+<td>4: Gintama</td>
+<td>0.7415196494555457</td>
+</tr>
+<tr>
+<td>5: Gintama&amp;#039</td>
+<td>0.7433903262344277</td>
+</tr>
+</tbody>
+</table><figcaption align="center">Table 3 - Output Recommendation System using Collaborative Filtering </figcaption>
+<h3 id="content-based-filtering">Content Based Filtering</h3>
+<p>Content-Based Filtering A user-provided data is used by a content-based recommender. When a user likes something, they give it a higher rating, whereas lower ratings indicate disinterest. In Content Based Filtering, these graded items serve as the ‘content.’ The user is then recommended future things based on this content that they might enjoy[2].</p>
+<p>The content-based filtering uses the features of the items and a user’s profile created from the data of previous activities to generate recommendations. This technique is most appropriate when known information about the items (name, area, portrayal). In content-based recommender system, recommendations are treated as a user-specific classification problem where the classifier is trained based on the likes and dislikes of the user and item features. Items are described using keywords, and a client profile is created to store the kind of items the client likes. These algorithms use this user profile to recommend items similar to those the client is currently examining or enjoyed in the past.</p>
+<p><strong>Term Frequency (TF) and Inverse Document Frequency (IDF)</strong></p>
+<p>In content-based filtering mechanisms and information retrieval systems, the concepts of Term Frequency (TF) and Inverse Document Frequency (IDF) are used[3]. A word’s frequency in a document is referred to as TF. The inverse of document frequency throughout the entire corpus of documents is the IDF. They are used, among other things, to figure out the relative worth of any document, article, news item, or film. The Vector Space Model is used to assess which things are more closely related to one another, and thus more closely related to the user profile. It calculates the distance between the vectors based on the angle between them[4].</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=1XfbtRCkCbBEy3enL0y8azmWF_ufDd3iI">
+<figcaption align="center">Fig.5 - TF-IDF</figcaption>
+
+<p><strong>Cosine similarity</strong></p>
+<blockquote></blockquote>
+<p>Cosine similarity measures the similarity between two vectors of an inner product space. It is measured by the cosine of the angle between two vectors and determines whether two vectors are pointing in roughly the same direction. It is often used to measure document similarity in text analysis. A document can be represented by thousands of attributes, each recording the frequency of a particular word (such as a keyword) or phrase in the document. Thus, each document is an object represented by what is called a <em>term-frequency vector</em>. Cosine similarity is a metric that measures the cosine of the angle between two vectors projected in a multi-dimensional space.</p>
+<blockquote>
+<p>The smaller the angle between the two vectors, the more similar they are to each other.</p>
+</blockquote>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=1PUVlgFzwvMrvPvaDRa8qLq2gZCpFoaJI">
+<figcaption align="center">Fig.6 - Cosine Similarity</figcaption>
+
+<p><strong>Cosine Distance:</strong></p>
+<p>Usually, people use the cosine similarity as a similarity metric between vectors. Now, the cosine distance can be defined as follows:</p>
+<blockquote>
+<p><strong>Cosine Distance = 1 — Cosine Similarity</strong></p>
+</blockquote>
+<p>The intuition behind this is that if 2 vectors are perfectly the same then the <strong>similarity</strong> is <strong>1</strong> (angle=0 hence 𝑐𝑜𝑠(𝜃)=1) and thus, <strong>distance</strong> is <strong>0</strong> (1–1=0).</p>
+<p>|index|name|genre|</p>
+<p>|—|---|—|</p>
+<p>|0|Hunter x Hunter Movie: Phantom Rouge|Action, Adventure, Shounen, Super Power|</p>
+<p>|1|Hunter x Hunter Movie: The Last Mission|Action, Adventure, Shounen, Super Power|</p>
+<p>|2|Hunter x Hunter: Greed Island|Action, Adventure, Shounen, Super Power|</p>
+<p>|3|Hunter x Hunter|Action, Adventure, Shounen, Super Power|</p>
+<p>|4|Hunter x Hunter OVA|Action, Adventure, Shounen, Super Power|</p>
+<figcaption align="center">Table 4 - Output Recommendation System using Content Based Filtering </figcaption>
+<h2 id="evaluation">Evaluation</h2>
+<p>Precision and recall determined using just the subset of recommendations from ranks 1 to k. The recommended order is decided by the predicted value. For example, the anime with the greatest predicted value is rated number one, whereas the anime with the k-th highest predicted value is ranked number k.</p>
+<figure>
+</figure><img src="https://drive.google.com/uc?export=view&amp;id=1bTcZTpEWS83wHz2sYSTJ1z3cgxJLKmJ8">
+<figcaption align="center">Fig.5 - Evaluation</figcaption>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>Using datasets and algorithms, recommender systems provide new opportunities for personalized recommendations. It also helps alleviate the problem of information overload, which is a persistent concern with information retrieval systems, and gives users access to anime that are not immediately available to them on the system. This project examined the two recommendation approaches and emphasized their advantages and disadvantages.</p>
+<p>Anime recommendation sample result:</p>
+<blockquote>
+<p>Recommendation System using Collaborative Filtering</p>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Recommendations for Hunter x Hunter (2011):</th>
+<th>Distance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1: Fullmetal Alchemist: Brotherhood</td>
+<td>0.582916050148331</td>
+</tr>
+<tr>
+<td>2: Steins;Gate</td>
+<td>0.6247773379089085</td>
+</tr>
+<tr>
+<td>3: Code Geass: Hangyaku no Lelouch R2</td>
+<td>0.6543877255375563</td>
+</tr>
+<tr>
+<td>4: Gintama</td>
+<td>0.7415196494555457</td>
+</tr>
+<tr>
+<td>5: Gintama&amp;#039</td>
+<td>0.7433903262344277</td>
+</tr>
+</tbody>
+</table><blockquote>
+<p>Recommendation System using Content-Based Filtering</p>
+</blockquote>
+<p>anime_recommendations(‘Hunter x Hunter (2011)’)</p>
+
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>name</th>
+<th>genre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Hunter x Hunter Movie: Phantom Rouge</td>
+<td>Action, Adventure, Shounen, Super Power</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Hunter x Hunter Movie: The Last Mission</td>
+<td>Action, Adventure, Shounen, Super Power</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hunter x Hunter: Greed Island</td>
+<td>Action, Adventure, Shounen, Super Power</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Hunter x Hunter</td>
+<td>Action, Adventure, Shounen, Super Power</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Hunter x Hunter OVA</td>
+<td>Action, Adventure, Shounen, Super Power</td>
+</tr>
+</tbody>
+</table><p>In the content-based model, we utilized content data over time to recommend anime of a similar genre and style; We also used the K-Nearest Neighbor algorithm, which displays five anime for each anime recommendation.</p>
+<h1 id="section"></h1>
+<h3 id="references">References</h3>
+<p>[1] Murali, M. Viswa, T. G. Vishnu, and Nancy Victor. “A Collaborative Filtering based Recommender System for Suggesting New Trends in Any Domain of Research.” In 2019 5th International Conference on Advanced Computing &amp; Communication Systems (ICACCS), pp. 550-553. IEEE, 2019.</p>
+<p>[2] Shinde, Urmila, and Rajashree Shedge. “Comparative analysis of collaborative filtering technique.” IOSR Journal of Computer Engineering 10 (2013): 77-82.</p>
+<p>[3] Qaiser, S., &amp; Ali, R. (2018). Text mining: use of TF-IDF to examine the relevance of words to documents. International Journal of Computer Applications, 181(1), 25-29.</p>
+<p>[4] Bafna, P., Pramod, D., &amp; Vaidya, A. (2016, March). Document clustering: TF-IDF approach. In 2016 International Conference on Electrical, Electronics, and Optimization Techniques (ICEEOT) (pp. 61-66). IEEE.</p>
+<p>[4] Shinde, Urmila, and Rajashree Shedge. “Comparative analysis of collaborative filtering technique.” IOSR Journal of Computer Engineering 10 (2013): 77-82.</p>
+</div>
+</body>
+
+</html>
